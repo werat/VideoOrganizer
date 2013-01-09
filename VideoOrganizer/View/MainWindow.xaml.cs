@@ -22,26 +22,14 @@ namespace VideoOrganizer
    /// </summary>
    public partial class MainWindow : Window, IShellView
    {
-      internal List<EntryRecord> Entries { get; set; }
-
       public MainWindow()
       {
          InitializeComponent();
-
-         Entries = new List<EntryRecord>();
       }
 
       private void fileViewItem_MouseDoubleClick(object sender, RoutedEventArgs e)
       {
-         var vr = (VideoRecord)fileView.SelectedItem;
-
-         if (vr == null) return;
-         if (!vr.Watched)
-            vr.WatchedTime = DateTime.Now;
-         vr.Watched = true;
-         fileView.Items.Refresh();
-
-         System.Diagnostics.Process.Start(vr.FullName);
+         PlayVideo();
       }
 
       public bool IsMaximized
@@ -58,6 +46,39 @@ namespace VideoOrganizer
                WindowState = WindowState.Normal;
             }
          }
+      }
+
+      private void fileView_PreviewKeyDown(object sender, KeyEventArgs e)
+      {
+         var list = (ListBox)sender;
+         if (e.Key == Key.Enter && list.SelectedItem != null)
+         {
+            PlayVideo();
+
+            return;
+         }
+
+         if (e.Key == Key.Down && list.SelectedIndex == list.Items.Count - 1)
+         {
+            //.Next will navigate to the first item in the list rather than skip to the next control. We will use Down or Right.
+            //this.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+
+            this.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down));
+            return;
+         }
+
+         base.OnKeyUp(e);
+      }
+
+      private void PlayVideo()
+      {
+         var vr = (VideoRecord)fileView.SelectedItem;
+         if (vr == null) return;
+
+         vr.Watched = true;
+         fileView.Items.Refresh();
+
+         System.Diagnostics.Process.Start(vr.FullName);
       }
    }
 }
