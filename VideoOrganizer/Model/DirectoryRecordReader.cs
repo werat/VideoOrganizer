@@ -25,8 +25,7 @@ namespace VideoOrganizer
 
       public DirectoryRecord Read(DirectoryInfo di)
       {
-         if (!di.Exists)
-            throw new DirectoryNotFoundException();
+         if (!di.Exists) throw new DirectoryNotFoundException();
 
          var dr = new DirectoryRecord() { FullName = di.FullName };
 
