@@ -16,7 +16,15 @@ namespace VideoOrganizer.ViewModel
 
       public EntryRecord Entry { get; set; }
 
-      //public ObservableCollection<DirectoryRecord> Records { get; private set; }
+      private DirectoryRecord selectedDirectory;
+
+      public DirectoryRecord SelectedDirectory
+      {
+         get { return selectedDirectory; }
+         set { SetProperty(ref selectedDirectory, value, "SelectedDirectory"); }
+      }
+
+      public ICommand OpenFolder { get; private set; }
 
       public MainWindowViewModel(IShellView view, UnitOfWork unitOfWork)
          : base(view)
@@ -24,7 +32,12 @@ namespace VideoOrganizer.ViewModel
          this.unitOfWork = unitOfWork;
          Entry = unitOfWork.GetEntry();
 
-         //Records = new ObservableCollection<DirectoryRecord>();
+         OpenFolder = new DelegateCommand(
+            () =>
+            {
+               System.Diagnostics.Process.Start(SelectedDirectory.FullName);
+            },
+            () => SelectedDirectory != null);
 
          ViewCore.Closed += new EventHandler(ViewCore_Closed);
 

@@ -51,7 +51,8 @@
       </Grid.ColumnDefinitions>
       <TreeView Name="directoryView"
                 Grid.Column="0"
-                ItemsSource="{Binding Entry.RootDirectories}">
+                ItemsSource="{Binding Entry.RootDirectories}"
+                SelectedItemChanged="directoryView_SelectedItemChanged">
          <TreeView.Resources>
             <HierarchicalDataTemplate DataType="{x:Type local:DirectoryRecord}" ItemsSource="{Binding Directories}">
                <TextBlock Text="{Binding Name}" />
@@ -70,66 +71,78 @@
                     Focusable="False"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Stretch" />
-      <ListBox Name="fileView"
-               Grid.Column="2"
+      <Grid Grid.Column="2">
+         <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+         </Grid.RowDefinitions>
+         <ListBox Name="fileView"
+               Grid.Row="0"
                HorizontalContentAlignment="Stretch"
-               ItemsSource="{Binding ElementName=directoryView,
-                                     Path=SelectedItem.Videos}"
+               ItemsSource="{Binding SelectedDirectory.Videos}"
                ItemTemplate="{StaticResource VideoRecordTemplate}"
                ScrollViewer.CanContentScroll="False"
                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                PreviewKeyDown="fileView_PreviewKeyDown">
-         <ListBox.ItemsPanel>
-            <ItemsPanelTemplate>
-               <VirtualizingStackPanel />
-            </ItemsPanelTemplate>
-         </ListBox.ItemsPanel>
-         <ListBox.ItemContainerStyle>
-            <Style TargetType="{x:Type ListBoxItem}">
-               <EventSetter Event="MouseDoubleClick" Handler="fileViewItem_MouseDoubleClick" />
+            <ListBox.ItemsPanel>
+               <ItemsPanelTemplate>
+                  <VirtualizingStackPanel />
+               </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle>
+               <Style TargetType="{x:Type ListBoxItem}">
+                  <EventSetter Event="MouseDoubleClick" Handler="fileViewItem_MouseDoubleClick" />
 
-               <Setter Property="Template">
-                  <Setter.Value>
-                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid>
-                           <Grid.ColumnDefinitions>
-                              <ColumnDefinition Width="Auto" />
-                              <ColumnDefinition Width="*" />
-                           </Grid.ColumnDefinitions>
-                           <ToggleButton Grid.Column="0"
+                  <Setter Property="Template">
+                     <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                           <Grid>
+                              <Grid.ColumnDefinitions>
+                                 <ColumnDefinition Width="Auto" />
+                                 <ColumnDefinition Width="*" />
+                              </Grid.ColumnDefinitions>
+                              <ToggleButton Grid.Column="0"
                                          Margin="5,0,0,0"
                                          IsChecked="{Binding Watched,
                                                              UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource CompletedButton}" />
-                           <Border x:Name="ContainerBorder"
+                              <Border x:Name="ContainerBorder"
                                    Grid.Column="1"
                                    Margin="5"
                                    Padding="5">
-                              <Grid>
-                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                 </Grid.ColumnDefinitions>
-                                 <ContentPresenter Grid.Column="0" />
-                                 <TextBlock Grid.Column="1" Visibility="{Binding Watched,
+                                 <Grid>
+                                    <Grid.ColumnDefinitions>
+                                       <ColumnDefinition Width="*" />
+                                       <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter Grid.Column="0" />
+                                    <TextBlock Grid.Column="1" Visibility="{Binding Watched,
                                                                            Converter ={StaticResource boolToVisibility}}"
                                       Text="{Binding WatchedTime, StringFormat='d MMMM yyyy в HH:mm'}" />
-                              </Grid>
-                           </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                           <Trigger Property="IsMouseOver" Value="True">
-                              <Setter TargetName="ContainerBorder" Property="Background" Value="#0F480480" />
-                           </Trigger>
-                           <Trigger Property="IsSelected" Value="True">
-                              <Setter TargetName="ContainerBorder" Property="Background" Value="#2A480480" />
-                           </Trigger>
-                        </ControlTemplate.Triggers>
-                     </ControlTemplate>
-                  </Setter.Value>
-               </Setter>
-            </Style>
-         </ListBox.ItemContainerStyle>
-      </ListBox>
+                                 </Grid>
+                              </Border>
+                           </Grid>
+                           <ControlTemplate.Triggers>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                 <Setter TargetName="ContainerBorder" Property="Background" Value="#0F480480" />
+                              </Trigger>
+                              <Trigger Property="IsSelected" Value="True">
+                                 <Setter TargetName="ContainerBorder" Property="Background" Value="#2A480480" />
+                              </Trigger>
+                           </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                     </Setter.Value>
+                  </Setter>
+               </Style>
+            </ListBox.ItemContainerStyle>
+         </ListBox>
+         <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button Margin="3"
+                    Padding="3"
+                    Command="{Binding OpenFolder}">
+               Open folder
+            </Button>
+         </StackPanel>
+      </Grid>
    </Grid>
 </Window>

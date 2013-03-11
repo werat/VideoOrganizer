@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VideoOrganizer.Properties;
 using VideoOrganizer.View;
+using VideoOrganizer.ViewModel;
 
 namespace VideoOrganizer
 {
@@ -34,7 +35,10 @@ namespace VideoOrganizer
 
       public bool IsMaximized
       {
-         get { return WindowState == WindowState.Maximized; }
+         get
+         {
+            return WindowState == WindowState.Maximized;
+         }
          set
          {
             if (value)
@@ -79,6 +83,15 @@ namespace VideoOrganizer
          fileView.Items.Refresh();
 
          System.Diagnostics.Process.Start(vr.FullName);
+      }
+
+      private void directoryView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+      {
+         var model = DataContext as MainWindowViewModel;
+         if (model != null)
+         {
+            model.SelectedDirectory = (DirectoryRecord)e.NewValue;
+         }
       }
    }
 }
