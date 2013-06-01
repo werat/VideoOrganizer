@@ -28,9 +28,14 @@ namespace VideoOrganizer
          InitializeComponent();
       }
 
+      private VideoRecord GetSelectedVideo()
+      {
+         return (VideoRecord)fileView.SelectedItem;
+      }
+
       private void fileViewItem_MouseDoubleClick(object sender, RoutedEventArgs e)
       {
-         PlayVideo();
+         PlayVideo(GetSelectedVideo());
       }
 
       public bool IsMaximized
@@ -55,11 +60,16 @@ namespace VideoOrganizer
       private void fileView_PreviewKeyDown(object sender, KeyEventArgs e)
       {
          var list = (ListBox)sender;
-         if (e.Key == Key.Enter && list.SelectedItem != null)
-         {
-            PlayVideo();
+         if (list.SelectedItem == null) return;
 
-            return;
+         if (e.Key == Key.Enter)
+         {
+            PlayVideo(GetSelectedVideo());
+         }
+         else if (e.Key == Key.Space)
+         {
+            var vr = GetSelectedVideo();
+            vr.Watched = !vr.Watched;
          }
 
          if (e.Key == Key.Down && list.SelectedIndex == list.Items.Count - 1)
@@ -74,9 +84,8 @@ namespace VideoOrganizer
          base.OnKeyUp(e);
       }
 
-      private void PlayVideo()
+      private void PlayVideo(VideoRecord vr)
       {
-         var vr = (VideoRecord)fileView.SelectedItem;
          if (vr == null) return;
 
          vr.Watched = true;
