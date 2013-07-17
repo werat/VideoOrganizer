@@ -10,9 +10,7 @@ namespace VideoOrganizer
 {
    internal class EntryRecordXmlRepository
    {
-      private readonly string databasePath = "database.xml";
-
-      public EntryRecord ReadEntryRecord()
+      public EntryRecord ReadEntryRecord(string databasePath = "database.xml")
       {
          if (!File.Exists(databasePath))
             return null;
@@ -24,7 +22,7 @@ namespace VideoOrganizer
          }
       }
 
-      public void SaveEntryRecord(EntryRecord entry)
+      public void SaveEntryRecord(EntryRecord entry, string databasePath = "database.xml")
       {
          var xs = new XmlSerializer(typeof(EntryRecord));
          using (var xw = new XmlTextWriter(databasePath, Encoding.UTF8) { Formatting = Formatting.Indented })

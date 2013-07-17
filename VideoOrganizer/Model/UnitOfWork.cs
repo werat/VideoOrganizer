@@ -21,6 +21,8 @@ namespace VideoOrganizer
 
       public void SaveEntry(EntryRecord entry)
       {
+         if (entry == null) throw new ArgumentNullException("entry");
+
          var repository = new EntryRecordXmlRepository();
          repository.SaveEntryRecord(entry);
       }
